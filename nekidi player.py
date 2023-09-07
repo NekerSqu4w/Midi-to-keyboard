@@ -86,7 +86,11 @@ class myApp():
 
         self.play = tk.Button(self.frameC, text="Send midi", command=self.playThreadMidi)
         self.play.grid(row=2,column=0)
-        self.play.configure(width=30,state=tk.DISABLED)
+        self.play.configure(width=10,state=tk.DISABLED)
+
+        self.stop = tk.Button(self.frameC, text="Stop midi", command=self.stopMidi)
+        self.stop.grid(row=3,column=0)
+        self.stop.configure(width=10,state=tk.DISABLED)
 
 
         #Frame D
@@ -142,7 +146,6 @@ class myApp():
             self.instrumentList.delete(i)
             
         everyInstrument = []
-
         for track in self.newMid.tracks:
             for msg in track:
                 if msg.type == "program_change":
@@ -157,9 +160,11 @@ class myApp():
 
                         self.window.update()
 
+
     def playMidi(self):
         self.startTime = time.time()
         self.play.configure(state=tk.DISABLED)
+        self.stop.configure(state=tk.NORMAL)
         self.playingMidi = True
 
         for msg in self.newMid.play():
@@ -172,6 +177,7 @@ class myApp():
         self.stopThread = False
         self.playingMidi = False
         self.play.configure(state=tk.NORMAL)
+        self.stop.configure(state=tk.DISABLED)
 
 
 
@@ -191,6 +197,7 @@ class myApp():
 
             self.readInformation()
             self.play.configure(state=tk.NORMAL)
+            self.stop.configure(state=tk.DISABLED)
 
 
     def setNewPort(self,event):
