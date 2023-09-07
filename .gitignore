@@ -2,5 +2,4 @@ midi/
 midiPlayerApp/
 buildApp.bat
 icon.ico
-midi_instrument.json
 play_keyboard.py
