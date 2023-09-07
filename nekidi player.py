@@ -166,13 +166,7 @@ class myApp():
             if self.stopThread:
                 break
 
-            if msg.type == "note_on":
-                #print("Playing note " + str(msg.note) + " on channel " + str(msg.channel+1))
-
-                self.sendToPort.send(msg)
-
-            if msg.type == "note_off":
-                self.sendToPort.send(msg)
+            self.sendToPort.send(msg)
 
 
         self.stopThread = False
