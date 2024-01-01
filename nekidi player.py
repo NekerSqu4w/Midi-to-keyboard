@@ -25,8 +25,8 @@ class myApp():
         self.window.geometry("555x400")
         self.window.resizable(False,False)
         self.window.iconbitmap("icon.ico")
-
-
+        
+        self.noteToRelease = set()
 
         self.select_file_text = tk.StringVar()
         self.select_file_text.set("waiting for..")
@@ -158,8 +158,18 @@ class myApp():
                         self.instrumentList.insert(parent='', index=msg.channel+1, iid=msg.channel+1, text=forceInstrument, values=(msg.channel+1, forceInstrument))
 
                         self.window.update()
-
-
+    
+    def insertReleaseNote(self,msg):
+        if msg.type == 'note_on' and msg.velocity > 0:
+            self.noteToRelease.add((msg.note, msg.channel))
+        elif msg.type == 'note_off' or (msg.type == 'note_on' and msg.velocity == 0):
+            self.noteToRelease.discard((msg.note, msg.channel))
+            
+    def releaseNote(self):
+        for release in self.noteToRelease:
+            self.sendToPort.send(mido.Message('note_off', note=release[0], channel=release[1]))
+    
+    
     def playMidi(self):
         self.startTime = time.time()
         self.play.configure(state=tk.DISABLED)
@@ -168,8 +178,10 @@ class myApp():
 
         for msg in self.newMid.play():
             if self.stopThread:
+                self.releaseNote()
                 break
-
+            
+            self.insertReleaseNote(msg)
             self.sendToPort.send(msg)
 
 
@@ -229,6 +241,3 @@ if __name__ == "__main__":
         instrument_list = json.load(json_file)
 
     myApp()
-
-
-#Make release every note when stop midi, because it's can let's note holding on some file
