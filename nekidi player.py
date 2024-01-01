@@ -36,7 +36,7 @@ class myApp():
         
         self.progressVar = tk.StringVar()
         self.progressVar.set(0) 
-          
+
         
         self.stopThread = False
         self.songTime = "00:00"
@@ -128,7 +128,6 @@ class myApp():
             self.playThread = threading.Thread(target=self.playMidi)
             self.playThread.start()
 
-
     def secToReadableTime(self,time):
         minutes = math.floor(time / 60)
         seconds = math.floor(time) % 60
@@ -180,7 +179,6 @@ class myApp():
         self.stop.configure(state=tk.DISABLED)
 
 
-
     def askMidFile(self):
         self.file_path = filedialog.askopenfilename(initialdir="midi/",filetypes=[("MIDI Files", "*.mid")])
 
@@ -188,7 +186,7 @@ class myApp():
             self.stopMidi()
 
             self.play.configure(state=tk.DISABLED)
-            self.newMid = mido.MidiFile(self.file_path)
+            self.newMid = mido.MidiFile(self.file_path) # this library doesn't use threading, so loading a big file crash the app
 
             self.croppedPath = self.file_path.split("/")[-2] + "/" + self.file_path.split("/")[-1]
             self.select_file_text.set(self.croppedPath)
@@ -231,3 +229,6 @@ if __name__ == "__main__":
         instrument_list = json.load(json_file)
 
     myApp()
+
+
+#Make release every note when stop midi, because it's can let's note holding on some file
